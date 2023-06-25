@@ -6,6 +6,7 @@
 #include "Components/InputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
+#include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -75,6 +76,27 @@ void Apj_MultipleShooterCharacter::SetupPlayerInputComponent(class UInputCompone
 	// handle touch devices
 	PlayerInputComponent->BindTouch(IE_Pressed, this, &Apj_MultipleShooterCharacter::TouchStarted);
 	PlayerInputComponent->BindTouch(IE_Released, this, &Apj_MultipleShooterCharacter::TouchStopped);
+}
+
+void Apj_MultipleShooterCharacter::OpenLobby()
+{
+	if(UWorld* World = GetWorld())
+	{
+		World->ServerTravel("/Game/ThirdPerson/Maps/Lobby?Listen");
+	}
+}
+
+void Apj_MultipleShooterCharacter::CallOpenLevel(const FString& Address)
+{
+	UGameplayStatics::OpenLevel(this, *Address);
+}
+
+void Apj_MultipleShooterCharacter::CallClientTravel(const FString& Address)
+{
+	if(APlayerController *PlayerController = GetGameInstance()->GetFirstLocalPlayerController())
+	{
+		PlayerController->ClientTravel(Address, TRAVEL_Absolute);
+	}
 }
 
 void Apj_MultipleShooterCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)

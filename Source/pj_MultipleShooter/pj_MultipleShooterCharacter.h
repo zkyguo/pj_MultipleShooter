@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "OnlineCharacter.h"
+#include "Kismet/GameplayStatics.h"
 #include "pj_MultipleShooterCharacter.generated.h"
 
 UCLASS(config=Game)
-class Apj_MultipleShooterCharacter : public ACharacter
+class Apj_MultipleShooterCharacter : public ACharacter, public IOnlineCharacter
 {
 	GENERATED_BODY()
 
@@ -62,5 +64,12 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
+public :
+	UFUNCTION(BlueprintCallable)
+	virtual void OpenLobby() override;
+	UFUNCTION(BlueprintCallable)
+	virtual void CallOpenLevel(const FString& Address) override;
+	UFUNCTION(BlueprintCallable)
+	virtual void CallClientTravel(const FString& Address) override;
 };
 

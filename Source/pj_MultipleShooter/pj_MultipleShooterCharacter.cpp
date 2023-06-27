@@ -1,6 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "pj_MultipleShooterCharacter.h"
+#include "pj_MultipleShooterCharacter.h"
+#include "pj_MultipleShooterCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -12,7 +14,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Apj_MultipleShooterCharacter
 
-Apj_MultipleShooterCharacter::Apj_MultipleShooterCharacter()
+Apj_MultipleShooterCharacter::Apj_MultipleShooterCharacter() : OnCreateSessionCompleteDelegate(FOnCreateSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnCreateSessionComplete))
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -50,6 +52,20 @@ Apj_MultipleShooterCharacter::Apj_MultipleShooterCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	IOnlineSubsystem* OnlineSubsystem = IOnlineSubsystem::Get();
+	OnlineSessionInterface = OnlineSubsystem->GetSessionInterface();
+	if(OnlineSubsystem)
+	{
+		if(GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(
+				-1,
+				15.f,
+				FColor::Blue,
+				FString::Printf(TEXT("Found subsystem %s"), *OnlineSubsystem->GetSubsystemName().ToString()));
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -98,6 +114,61 @@ void Apj_MultipleShooterCharacter::CallClientTravel(const FString& Address)
 		PlayerController->ClientTravel(Address, TRAVEL_Absolute);
 	}
 }
+
+void Apj_MultipleShooterCharacter::CreateGameSession()
+{
+	if(!OnlineSessionInterface.IsValid())
+	{
+		return;
+	}
+
+	auto ExistingSession = OnlineSessionInterface->GetNamedSession(NAME_GameSession);
+	if(ExistingSession != nullptr)
+	{
+		OnlineSessionInterface->DestroySession(NAME_GameSession);
+	}
+	OnlineSessionInterface->AddOnCreateSessionCompleteDelegate_Handle(OnCreateSessionCompleteDelegate);
+	TSharedPtr<FOnlineSessionSettings> SessionSettings = MakeShareable(new FOnlineSessionSettings());
+
+	SessionSettings->bIsLANMatch = false;
+	SessionSettings->NumPublicConnections = 4;
+	SessionSettings->bAllowJoinInProgress = true;
+	SessionSettings->bAllowJoinViaPresence = true;
+	SessionSettings->bShouldAdvertise = true;
+	SessionSettings->bUsesPresence = true;
+	
+	const ULocalPlayer*player = GetWorld()->GetFirstLocalPlayerFromController();
+	OnlineSessionInterface->CreateSession(*player->GetPreferredUniqueNetId(), NAME_GameSession, *SessionSettings);
+}
+
+void Apj_MultipleShooterCharacter::OnCreateSessionComplete(FName SessionName, bool bWasSuccesful)
+{
+	if(bWasSuccesful)
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(
+				-1,
+				15.f,
+				FColor::Blue,
+				FString::Printf(TEXT("Create Session : %s"), *SessionName.ToString())
+			);
+		}
+	}
+	else
+	{
+		if(GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(
+				-1,
+				15.f,
+				FColor::Red,
+				FString::Printf(TEXT("Failed to create Session"))
+			);
+		}
+	}
+}
+
 
 void Apj_MultipleShooterCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
 {

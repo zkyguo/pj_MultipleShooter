@@ -6,6 +6,9 @@
 #include "GameFramework/Character.h"
 #include "OnlineCharacter.h"
 #include "Kismet/GameplayStatics.h"
+#include "OnlineSubsystem.h"
+#include "Interfaces/OnlineSessionInterface.h"
+#include "OnlineSessionSettings.h"
 #include "pj_MultipleShooterCharacter.generated.h"
 
 UCLASS(config=Game)
@@ -71,5 +74,17 @@ public :
 	virtual void CallOpenLevel(const FString& Address) override;
 	UFUNCTION(BlueprintCallable)
 	virtual void CallClientTravel(const FString& Address) override;
+
+	// Pointer to the online session
+	IOnlineSessionPtr OnlineSessionInterface;
+
+protected:
+	UFUNCTION(BlueprintCallable)
+	void CreateGameSession();
+
+	void OnCreateSessionComplete(FName SessionName, bool bWasSuccesful);
+
+private :
+	FOnCreateSessionCompleteDelegate OnCreateSessionCompleteDelegate;
 };
 

@@ -8,6 +8,17 @@ public class pj_MultipleShooter : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay","OnlineSubSystemSteam", "OnlineSubSystem", "MultiplayerSessions" });
+		PublicDependencyModuleNames.AddRange(new string[] { 
+			"Core", 
+			"CoreUObject", 
+			"Engine", 
+			"InputCore", 
+			"HeadMountedDisplay",
+			"OnlineSubSystemSteam",
+			"OnlineSubSystem", 
+			"MultiplayerSessions",
+			"Slate",
+            "SlateCore",
+            "UMG"});
 	}
 }

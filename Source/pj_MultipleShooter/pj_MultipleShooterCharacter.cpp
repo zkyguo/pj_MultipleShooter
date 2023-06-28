@@ -16,7 +16,8 @@
 
 Apj_MultipleShooterCharacter::Apj_MultipleShooterCharacter() :
 OnCreateSessionCompleteDelegate(FOnCreateSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnCreateSessionComplete)),
-OnFindSessionsCompleteDelegate(FOnFindSessionsCompleteDelegate::CreateUObject(this, &ThisClass::OnFindSessionComplete))
+OnFindSessionsCompleteDelegate(FOnFindSessionsCompleteDelegate::CreateUObject(this, &ThisClass::OnFindSessionComplete)),
+OnJoinSessionCompleteDelegate(FOnJoinSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnJoinSessionComplete))
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -138,7 +139,8 @@ void Apj_MultipleShooterCharacter::CreateGameSession()
 	SessionSettings->bAllowJoinViaPresence = true;
 	SessionSettings->bShouldAdvertise = true;
 	SessionSettings->bUsesPresence = true;
-	
+	SessionSettings->Set(FName("MatchType"), FString("FreeForAll"), EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+
 	const ULocalPlayer*player = GetWorld()->GetFirstLocalPlayerFromController();
 	OnlineSessionInterface->CreateSession(*player->GetPreferredUniqueNetId(), NAME_GameSession, *SessionSettings);
 }
@@ -175,6 +177,11 @@ void Apj_MultipleShooterCharacter::OnCreateSessionComplete(FName SessionName, bo
 				FString::Printf(TEXT("Create Session : %s"), *SessionName.ToString())
 			);
 		}
+
+		if(UWorld* world = GetWorld())
+		{
+			OpenLobby();
+		}
 	}
 	else
 	{
@@ -192,10 +199,18 @@ void Apj_MultipleShooterCharacter::OnCreateSessionComplete(FName SessionName, bo
 
 void Apj_MultipleShooterCharacter::OnFindSessionComplete(bool bSessionFound)
 {
+	if(!OnlineSessionInterface.IsValid())
+	{
+		return;
+	}
+
 	for(auto result : OnlineSessionSearch->SearchResults)
 	{
 		FString id = result.GetSessionIdStr();
 		FString user = result.Session.OwningUserName;
+		FString matchType;
+		result.Session.SessionSettings.Get(FName("MatchType"), matchType);
+
 		if(GEngine)
 		{
 			GEngine->AddOnScreenDebugMessage(
@@ -203,6 +218,62 @@ void Apj_MultipleShooterCharacter::OnFindSessionComplete(bool bSessionFound)
 				15.f,
 				FColor::Cyan,
 				FString::Printf(TEXT("Id : %s, User : %s"), *id, *user));
+		}
+
+		if(matchType == FString("FreeForAll"))
+		{
+			if (GEngine)
+			{
+				GEngine->AddOnScreenDebugMessage(
+					-1,
+					15.f,
+					FColor::Cyan,
+					FString::Printf(TEXT("Joining Match Type : %s"), *matchType));
+			}
+
+			OnlineSessionInterface->AddOnJoinSessionCompleteDelegate_Handle(OnJoinSessionCompleteDelegate);
+			const ULocalPlayer* player = GetWorld()->GetFirstLocalPlayerFromController();
+			OnlineSessionInterface->JoinSession(*player->GetPreferredUniqueNetId(), NAME_GameSession, result);
+			return;
+		}
+	}
+
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(
+			-1,
+			15.f,
+			FColor::Red,
+			FString::Printf(TEXT("No Available Session Found")));
+	}
+}
+
+void Apj_MultipleShooterCharacter::OnJoinSessionComplete(FName SessionName,
+	EOnJoinSessionCompleteResult::Type resultType)
+{
+	if(!OnlineSessionInterface.IsValid())
+	{
+		return;
+	}
+
+	FString Address;
+	if(OnlineSessionInterface->GetResolvedConnectString(SessionName, Address))
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(
+				-1,
+				15.f,
+				FColor::Yellow,
+				FString::Printf(TEXT("Connect String : %s"), *Address));
+		}
+
+		//Get host player 
+		APlayerController* PlayerController = GetGameInstance()->GetFirstLocalPlayerController();
+		if(PlayerController)
+		{
+			PlayerController->ClientTravel(Address, TRAVEL_Absolute);
 		}
 	}
 }

@@ -8,6 +8,12 @@
 #include "OnlineSubsystem.h"
 #include "MultiplayerSessionsSubsystem.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMultiplayerOnCreateSessionComplete, bool, bWasSuccessful);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FMultiplayerOnFindSessionComplete, const TArray<FOnlineSessionSearchResult>& SessionSearchResults, bool bWasSuccessful);
+DECLARE_MULTICAST_DELEGATE_OneParam(FMultiplayerOnJoinSessionComplete, EOnJoinSessionCompleteResult::Type Result);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMultiplayerOnDestroySessionComplete, bool, bWasSuccessful);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMUltiplayerOnStartSessionComplete, bool, bWasSuccessful);
+
 /**
  * 
  */
@@ -24,6 +30,13 @@ public:
 	void JoinSession(const FOnlineSessionSearchResult& SessionSearchResult);
 	void DestroySession();
 	void StartSession();
+
+	//Custom Delegates for Menu class
+	FMultiplayerOnCreateSessionComplete MultiplayerOnCreateSessionComplete;
+	FMultiplayerOnFindSessionComplete MultiplayerOnFindSessionComplete;
+	FMultiplayerOnJoinSessionComplete MultiplayerOnJoinSessionComplete;
+	FMultiplayerOnDestroySessionComplete MultiplayerOnDestroySessionComplete;
+	FMUltiplayerOnStartSessionComplete MUltiplayerOnStartSessionComplete;
 
 private:
 	IOnlineSessionPtr SessionInterface;

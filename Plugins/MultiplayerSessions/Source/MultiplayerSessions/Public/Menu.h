@@ -15,7 +15,7 @@ UCLASS()
 class MULTIPLAYERSESSIONS_API UMenu : public UUserWidget
 {
 	GENERATED_BODY()
-
+		
 public :
 	UFUNCTION(BlueprintCallable)
 	void MenuSetup(int32 NumOfPublicConnection = 4, FString TypeMath = FString(TEXT("FreeForAll")));
@@ -23,6 +23,15 @@ public :
 protected:
 	virtual bool Initialize() override;
 	virtual void OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld) override;
+
+	UFUNCTION()
+	void OnCreateSession(bool bWasSuccessful);
+	void OnFindSession(const TArray<FOnlineSessionSearchResult>& SessionSearchResults, bool bWasSuccessful);
+	void OnJoinSession(EOnJoinSessionCompleteResult::Type Result);
+	UFUNCTION()
+	void OnDestroySession(bool bWasSuccessful);
+	UFUNCTION()
+	void OnStartSession(bool bWasSuccessful);
 
 private:
 	int32 NumPublicConnect{4};

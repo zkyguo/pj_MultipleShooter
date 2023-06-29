@@ -22,14 +22,6 @@ bool UMenu::Initialize()
 	return true;
 }
 
-void UMenu::OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld)
-{
-	MenuTearDown();
-	Super::OnLevelRemovedFromWorld(InLevel, InWorld);
-
-}
-
-
 void UMenu::MenuSetup(int32 NumOfPublicConnection, FString TypeMath)
 {
 	NumPublicConnect = NumOfPublicConnection;
@@ -40,10 +32,10 @@ void UMenu::MenuSetup(int32 NumOfPublicConnection, FString TypeMath)
 	bIsFocusable = true;
 
 	UWorld* World = GetWorld();
-	if(World)
+	if (World)
 	{
 		APlayerController* PlayerController = World->GetFirstPlayerController();
-		if(PlayerController)
+		if (PlayerController)
 		{
 			FInputModeUIOnly InputMode;
 			InputMode.SetWidgetToFocus(TakeWidget());
@@ -53,11 +45,51 @@ void UMenu::MenuSetup(int32 NumOfPublicConnection, FString TypeMath)
 		}
 	}
 
-	if(UGameInstance *GameInstance = GetGameInstance())
+	if (UGameInstance* GameInstance = GetGameInstance())
 	{
 		MultiplayerSessionsSubsystem = GameInstance->GetSubsystem<UMultiplayerSessionsSubsystem>();
 	}
+
+	if (MultiplayerSessionsSubsystem)
+	{
+		MultiplayerSessionsSubsystem->MUltiplayerOnStartSessionComplete.AddDynamic(this, &ThisClass::OnCreateSession);
+		MultiplayerSessionsSubsystem->MultiplayerOnFindSessionComplete.AddUObject(this, &ThisClass::OnFindSession);
+		MultiplayerSessionsSubsystem->MultiplayerOnJoinSessionComplete.AddUObject(this, &ThisClass::OnJoinSession);
+		MultiplayerSessionsSubsystem->MultiplayerOnDestroySessionComplete.AddDynamic(this, &ThisClass::OnDestroySession);
+		MultiplayerSessionsSubsystem->MUltiplayerOnStartSessionComplete.AddDynamic(this, &ThisClass::OnStartSession);	
+	}
 }
+
+void UMenu::OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld)
+{
+	MenuTearDown();
+	Super::OnLevelRemovedFromWorld(InLevel, InWorld);
+
+}
+
+//Menu delegate callback Methods
+void UMenu::OnCreateSession(bool bWasSuccessful)
+{
+}
+
+void UMenu::OnFindSession(const TArray<FOnlineSessionSearchResult> &Results, bool bWasSuccessful)
+{
+}
+
+void UMenu::OnJoinSession(EOnJoinSessionCompleteResult::Type Result)
+{
+}
+
+void UMenu::OnDestroySession(bool bWasSuccessful)
+{
+}
+
+void UMenu::OnStartSession(bool bWasSuccessful)
+{
+}
+//************************************************************************************************//
+
+
 
 void UMenu::OnJoinButtonClicked()
 {

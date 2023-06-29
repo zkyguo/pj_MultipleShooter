@@ -41,6 +41,7 @@ public:
 private:
 	IOnlineSessionPtr SessionInterface;
 	TSharedPtr<FOnlineSessionSettings> LastSessionSettings;
+	TSharedPtr<FOnlineSessionSearch> LastSessionSearch;
 
 	//Delegate : Use to Bind function after Operation is complete
 	//DelegateHandle : Use to remove delegate as soon as no longer use

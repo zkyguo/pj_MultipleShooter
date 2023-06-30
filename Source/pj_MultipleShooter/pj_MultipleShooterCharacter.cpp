@@ -64,7 +64,7 @@ OnJoinSessionCompleteDelegate(FOnJoinSessionCompleteDelegate::CreateUObject(this
 		{
 			GEngine->AddOnScreenDebugMessage(
 				-1,
-				15.f,
+				10.f,
 				FColor::Blue,
 				FString::Printf(TEXT("Found subsystem %s"), *OnlineSubsystem->GetSubsystemName().ToString()));
 		}

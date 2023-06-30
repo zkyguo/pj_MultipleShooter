@@ -60,6 +60,10 @@ private:
 	FOnStartSessionCompleteDelegate StartSessionCompleteDelegate;
 	FDelegateHandle StartSessionCompleteDelegateHandle;
 
+	bool bCreateSessionOnDestroy{ false };
+	int32 LastNumPublicConnections;
+	FString	LastMatcgType;
+
 protected:
 
 	void OnCreateSessionComplete(FName SessionName, bool bWasSuccesful);

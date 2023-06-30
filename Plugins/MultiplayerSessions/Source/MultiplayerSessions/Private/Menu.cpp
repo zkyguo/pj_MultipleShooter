@@ -29,7 +29,7 @@ void UMenu::MenuSetup(int32 NumOfPublicConnection, FString TypeMath, FString Lob
 {
 	NumPublicConnect = NumOfPublicConnection;
 	MatchType = TypeMath;
-	PathToLobby = FString::Printf(TEXT("?Listen"), *LobbyPath);
+	PathToLobby = FString::Printf(TEXT("%s?Listen"), *LobbyPath);
 
 	AddToViewport();
 	SetVisibility(ESlateVisibility::Visible);
@@ -74,10 +74,36 @@ void UMenu::OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld)
 //Menu delegate callback Methods
 void UMenu::OnCreateSession(bool bWasSuccessful)
 {
+	if(bWasSuccessful)
+	{
+		UWorld* World = GetWorld();
+		if(World)
+		{
+			World->ServerTravel(PathToLobby);
+		}
+	}
+	else
+	{
+		if(GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(
+				-1,
+				15.f,
+				FColor::Red,
+				FString::Printf(TEXT("Failed to create session")));
+		}
+		HostButton->SetIsEnabled(true);
+	}
+	
 }
 
 void UMenu::OnFindSession(const TArray<FOnlineSessionSearchResult> &Results, bool bWasSuccessful)
 {
+	if(MultiplayerSessionsSubsystem == nullptr)
+	{
+		return;
+	}
+
 	for(auto result : Results)
 	{
 		FString SettingsValue;
@@ -89,6 +115,19 @@ void UMenu::OnFindSession(const TArray<FOnlineSessionSearchResult> &Results, boo
 			MultiplayerSessionsSubsystem->JoinSession(result);
 			return;
 		}
+	}
+
+	if(!bWasSuccessful || Results.Num() == 0)
+	{
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(
+				-1,
+				15.f,
+				FColor::Red,
+				FString::Printf(TEXT("No room has been found")));
+		}
+		JoinButton->SetIsEnabled(true);
 	}
 }
 
@@ -110,6 +149,12 @@ void UMenu::OnJoinSession(EOnJoinSessionCompleteResult::Type Result)
 			}
 		}
 	}
+	if(Result != EOnJoinSessionCompleteResult::Success)
+	{
+
+
+		JoinButton->SetIsEnabled(true);
+	}
 }
 
 void UMenu::OnDestroySession(bool bWasSuccessful)
@@ -125,6 +170,8 @@ void UMenu::OnStartSession(bool bWasSuccessful)
 
 void UMenu::OnJoinButtonClicked()
 {
+	JoinButton->SetIsEnabled(false); //Avoid a second click
+
 	if(MultiplayerSessionsSubsystem)
 	{
 		MultiplayerSessionsSubsystem->FindSession(10000);
@@ -133,14 +180,8 @@ void UMenu::OnJoinButtonClicked()
 
 void UMenu::OnHostButtonClicked()
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(
-			-1,
-			15.f,
-			FColor::Yellow,
-			FString::Printf(TEXT("Host Button clicked")));
-	}
+
+	HostButton->SetIsEnabled(false);//Avoid a second click
 
 	if(MultiplayerSessionsSubsystem)
 	{

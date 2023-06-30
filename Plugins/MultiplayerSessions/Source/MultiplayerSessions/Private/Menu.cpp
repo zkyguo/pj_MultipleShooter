@@ -25,10 +25,11 @@ bool UMenu::Initialize()
 	return true;
 }
 
-void UMenu::MenuSetup(int32 NumOfPublicConnection, FString TypeMath)
+void UMenu::MenuSetup(int32 NumOfPublicConnection, FString TypeMath, FString LobbyPath)
 {
 	NumPublicConnect = NumOfPublicConnection;
 	MatchType = TypeMath;
+	PathToLobby = FString::Printf(TEXT("?Listen"), *LobbyPath);
 
 	AddToViewport();
 	SetVisibility(ESlateVisibility::Visible);
@@ -147,7 +148,7 @@ void UMenu::OnHostButtonClicked()
 		UWorld* World = GetWorld();
 		if(World)
 		{
-			World->ServerTravel("/Game/ThirdPerson/Maps/Lobby?Listen");
+			World->ServerTravel(PathToLobby);
 		}	
 	}
 }

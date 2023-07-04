@@ -19,6 +19,9 @@ ABlasterCharacter::ABlasterCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = true;
 
+	OverheadWdiget = CreateDefaultSubobject<UWidgetComponent>(TEXT("OverheadWdiget"));
+	OverheadWdiget->SetupAttachment(RootComponent);
+
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 }

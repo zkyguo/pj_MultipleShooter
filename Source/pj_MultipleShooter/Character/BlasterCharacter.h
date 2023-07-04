@@ -6,7 +6,9 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/SpringArmComponent.h"
 #include <Camera/CameraComponent.h>
+#include <Components/WidgetComponent.h>
 #include "BlasterCharacter.generated.h"
+
 
 
 UCLASS()
@@ -39,6 +41,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	UCameraComponent* FollowCamera;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UWidgetComponent* OverheadWdiget;
+		
 public:	
 	
 

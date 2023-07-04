@@ -8,10 +8,20 @@
 void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
-	if(GameState)
-	{
-		int32 numberPlayers = GameState.Get()->PlayerArray.Num();
+	int32 numberPlayers = GameState.Get()->PlayerArray.Num();
 
+	if(numberPlayers == 2)
+	{
+		UWorld* World = GetWorld();
+		if(World)
+		{
+			bUseSeamlessTravel = true;
+			World->ServerTravel(FString("/Game/Maps/BlasterMap?listen"));
+		}
+	}
+
+	if(GameState.Get())
+	{
 		if (GEngine)
 		{
 			GEngine->AddOnScreenDebugMessage(

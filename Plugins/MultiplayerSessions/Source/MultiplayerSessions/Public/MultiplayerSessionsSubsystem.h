@@ -24,6 +24,7 @@ class MULTIPLAYERSESSIONS_API UMultiplayerSessionsSubsystem : public UGameInstan
 
 public:
 	UMultiplayerSessionsSubsystem();
+	bool IsValidSessionInterface();
 
 	void CreateSession(int32 NumPublicConnections, FString MatchType);
 	void FindSession(int32 MaxSearchResults);

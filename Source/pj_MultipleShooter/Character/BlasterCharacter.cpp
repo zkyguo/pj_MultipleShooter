@@ -99,7 +99,7 @@ void ABlasterCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon)
 	}
 	else if(LastWeapon)
 	{
-		OverlappingWeapon->ShowPickUpWidget(false);
+		LastWeapon->ShowPickUpWidget(false);
 	}
 }
 

@@ -13,18 +13,27 @@ JoinSessionCompleteDelegate(FOnJoinSessionCompleteDelegate::CreateUObject(this,&
 DestroySessionCompleteDelegate(FOnDestroySessionCompleteDelegate::CreateUObject(this,&ThisClass::OnDestroySessionComplete)),
 StartSessionCompleteDelegate(FOnStartSessionCompleteDelegate::CreateUObject(this,&ThisClass::OnStartSessionComplete))
 {
-	IOnlineSubsystem* OnlineSubsystem = IOnlineSubsystem::Get();
-	if(OnlineSubsystem)
+
+}
+
+bool UMultiplayerSessionsSubsystem::IsValidSessionInterface()
+{
+	if (!SessionInterface)
 	{
-		SessionInterface = OnlineSubsystem->GetSessionInterface();
+		IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
+		if (Subsystem)
+		{
+			SessionInterface = Subsystem->GetSessionInterface();
+		}
 	}
+	return SessionInterface.IsValid();
 }
 
 //Session Operation
 
 void UMultiplayerSessionsSubsystem::CreateSession(int32 NumPublicConnections, FString MatchType)
 {
-	if(!SessionInterface.IsValid())
+	if(!IsValidSessionInterface())
 	{
 		return;
 	}

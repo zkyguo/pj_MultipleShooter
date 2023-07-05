@@ -3,6 +3,7 @@
 
 #include "BlasterCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ABlasterCharacter::ABlasterCharacter()
@@ -46,6 +47,13 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("LookUp", this, &ThisClass::LookUp);
 }
 
+void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME_CONDITION(ABlasterCharacter, OverlappingWeapon,COND_OwnerOnly);
+}
+
 // Called every frame
 void ABlasterCharacter::Tick(float DeltaTime)
 {
@@ -81,6 +89,34 @@ void ABlasterCharacter::Turn(float Value)
 void ABlasterCharacter::LookUp(float Value)
 {
 	AddControllerPitchInput(-Value);
+}
+
+void ABlasterCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon)
+{
+	if(OverlappingWeapon)
+	{
+		OverlappingWeapon->ShowPickUpWidget(true);
+	}
+	else if(LastWeapon)
+	{
+		OverlappingWeapon->ShowPickUpWidget(false);
+	}
+}
+
+void ABlasterCharacter::SetOverlappingWeapon(AWeapon* Weapon)
+{
+	if(OverlappingWeapon)
+	{
+		OverlappingWeapon->ShowPickUpWidget(false);
+	}
+	OverlappingWeapon = Weapon;
+	if(IsLocallyControlled())
+	{
+		if(OverlappingWeapon)
+		{
+			OverlappingWeapon->ShowPickUpWidget(true);
+		}
+	}
 }
 
 

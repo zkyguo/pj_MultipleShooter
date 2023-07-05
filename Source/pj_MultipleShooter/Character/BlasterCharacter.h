@@ -7,7 +7,9 @@
 #include "GameFramework/SpringArmComponent.h"
 #include <Camera/CameraComponent.h>
 #include <Components/WidgetComponent.h>
+#include <pj_MultipleShooter/Weapon/Weapon.h>
 #include "BlasterCharacter.generated.h"
+
 
 
 
@@ -24,6 +26,10 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
 
 protected:
 	// Called when the game starts or when spawned
@@ -43,8 +49,13 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UWidgetComponent* OverheadWdiget;
-		
-public:	
-	
 
+	UPROPERTY(ReplicatedUsing = OnRep_OverlappingWeapon)
+	AWeapon* OverlappingWeapon;
+
+	UFUNCTION()
+	void OnRep_OverlappingWeapon(AWeapon* LastWeapon);
+
+public:
+	void SetOverlappingWeapon(AWeapon* Weapon);
 };

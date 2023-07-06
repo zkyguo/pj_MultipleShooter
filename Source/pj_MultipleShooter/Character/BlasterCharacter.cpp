@@ -23,6 +23,9 @@ ABlasterCharacter::ABlasterCharacter()
 	OverheadWdiget = CreateDefaultSubobject<UWidgetComponent>(TEXT("OverheadWdiget"));
 	OverheadWdiget->SetupAttachment(RootComponent);
 
+	CombatComponent = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
+	CombatComponent->SetIsReplicated(true);
+
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
@@ -40,6 +43,7 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Equipe", IE_Pressed, this, &ThisClass::EquipeButtonPressed);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &ThisClass::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ThisClass::MoveRight);
@@ -52,6 +56,15 @@ void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME_CONDITION(ABlasterCharacter, OverlappingWeapon,COND_OwnerOnly);
+}
+
+void ABlasterCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	if(CombatComponent)
+	{
+		CombatComponent->Character = this;
+	}
 }
 
 // Called every frame
@@ -91,6 +104,22 @@ void ABlasterCharacter::LookUp(float Value)
 	AddControllerPitchInput(-Value);
 }
 
+void ABlasterCharacter::EquipeButtonPressed()
+{
+	if(CombatComponent)
+	{
+		if(HasAuthority()) //if is on Server
+		{
+			CombatComponent->EquipeWeapon(OverlappingWeapon);
+		}
+		else
+		{
+			ServerEquipButtonPressed();
+		}
+	}
+
+}
+
 void ABlasterCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon)
 {
 	if(OverlappingWeapon)
@@ -100,6 +129,14 @@ void ABlasterCharacter::OnRep_OverlappingWeapon(AWeapon* LastWeapon)
 	else if(LastWeapon)
 	{
 		LastWeapon->ShowPickUpWidget(false);
+	}
+}
+
+void ABlasterCharacter::ServerEquipButtonPressed_Implementation()
+{
+	if (CombatComponent)
+	{
+		CombatComponent->EquipeWeapon(OverlappingWeapon);
 	}
 }
 

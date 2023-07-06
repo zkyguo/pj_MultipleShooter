@@ -8,6 +8,7 @@
 #include <Camera/CameraComponent.h>
 #include <Components/WidgetComponent.h>
 #include <pj_MultipleShooter/Weapon/Weapon.h>
+#include "pj_MultipleShooter/BlasterComponent/CombatComponent.h"
 #include "BlasterCharacter.generated.h"
 
 
@@ -26,10 +27,9 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	
+	// Initialize components
+	virtual void PostInitializeComponents() override;
 
 protected:
 	// Called when the game starts or when spawned
@@ -39,6 +39,7 @@ protected:
 	void MoveRight(float Value);
 	void Turn(float Value);
 	void LookUp(float Value);
+	void EquipeButtonPressed();
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
@@ -56,6 +57,14 @@ private:
 	UFUNCTION()
 	void OnRep_OverlappingWeapon(AWeapon* LastWeapon);
 
+	//Here track all replicatedUsing.Which share to all client info
+	UPROPERTY(VisibleAnywhere)
+	UCombatComponent* CombatComponent;
+
+	UFUNCTION(Server,Reliable) //Reliable = once Equip Button pressed, we 
+	void ServerEquipButtonPressed();
+
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);
+
 };

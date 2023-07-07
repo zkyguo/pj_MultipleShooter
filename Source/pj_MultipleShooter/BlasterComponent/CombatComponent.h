@@ -17,17 +17,21 @@ public:
 	// Sets default values for this component's properties
 	UCombatComponent();
 
+	friend class ABlasterCharacter;
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	friend class ABlasterCharacter;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	void EquipeWeapon(AWeapon* Weapon);
+
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
 private:
+	UPROPERTY(Replicated)
 	AWeapon* EquippedWeapon;
+
 	class ABlasterCharacter* Character;
 		
 };

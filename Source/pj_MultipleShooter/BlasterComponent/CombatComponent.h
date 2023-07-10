@@ -29,9 +29,13 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+
+	class ABlasterCharacter* Character;
+
 	UPROPERTY(Replicated)
 	AWeapon* EquippedWeapon;
 
-	class ABlasterCharacter* Character;
+	UPROPERTY(Replicated)
+	bool bAiming;
 		
 };

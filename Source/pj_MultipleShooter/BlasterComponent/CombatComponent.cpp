@@ -4,6 +4,7 @@
 #include "CombatComponent.h"
 #include "pj_MultipleShooter/Character/BlasterCharacter.h"
 #include "Engine/SkeletalMeshSocket.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values for this component's properties
@@ -16,6 +17,15 @@ UCombatComponent::UCombatComponent()
 	// ...
 }
 
+
+void UCombatComponent::OnRep_EquippedWeapon()
+{
+	if(EquippedWeapon && Character)
+	{
+		Character->GetCharacterMovement()->bOrientRotationToMovement = false;
+		Character->bUseControllerRotationYaw = true;
+	}
+}
 
 // Called when the game starts
 void UCombatComponent::BeginPlay()
@@ -57,6 +67,7 @@ void UCombatComponent::EquipeWeapon(AWeapon* Weapon)
 		HandSocket->AttachActor(EquippedWeapon, Character->GetMesh());
 	}
 	EquippedWeapon->SetOwner(Character);
+
 }
 
 void UCombatComponent::SetAiming(bool bIsAiming)

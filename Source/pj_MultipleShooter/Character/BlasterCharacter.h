@@ -40,6 +40,7 @@ protected:
 	void Turn(float Value);
 	void LookUp(float Value);
 	void CrouchButtonPressed();
+	void CrouchButtonReleased();
 	void EquipeButtonPressed();
 	void AimButtonPressed();
 	void AimButtonReleassed();

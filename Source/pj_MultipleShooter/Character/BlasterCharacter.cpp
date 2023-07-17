@@ -2,7 +2,9 @@
 
 
 #include "BlasterCharacter.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values
@@ -28,7 +30,10 @@ ABlasterCharacter::ABlasterCharacter()
 
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 }
 
 // Called whe the game starts or when spawned
@@ -76,7 +81,7 @@ void ABlasterCharacter::PostInitializeComponents()
 void ABlasterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	AimOffset(DeltaTime);
 }
 
 void ABlasterCharacter::MoveForward(float Value)
@@ -155,6 +160,39 @@ void ABlasterCharacter::AimButtonReleassed()
 	if (CombatComponent)	
 	{
 		CombatComponent->SetAiming(false);
+	}
+}
+
+void ABlasterCharacter::AimOffset(float DeltaTime)
+{
+	if (CombatComponent && CombatComponent->EquippedWeapon == NULL) return;
+
+	FVector Velocity =GetVelocity();
+	Velocity.Z = 0;
+	float Speed = Velocity.Size();
+	bool isInAir = GetCharacterMovement()->IsFalling();
+
+	if(Speed == 0.f && !isInAir) //if standing, not jumping
+	{
+		FRotator CurrentAimRotator = FRotator(0.f, GetBaseAimRotation().Yaw, 0.f);
+		FRotator DeltaAimRotator = UKismetMathLibrary::NormalizedDeltaRotator(CurrentAimRotator, StartingAimRotator);
+		AO_Yaw = DeltaAimRotator.Yaw;
+		GetCharacterMovement()->bUseControllerDesiredRotation = false;
+		
+	}
+	if(Speed > 0.f || isInAir) //if moving or jumping
+	{
+		StartingAimRotator = FRotator(0.f, GetBaseAimRotation().Yaw, 0.f);
+		AO_Yaw = 0.f;
+		GetCharacterMovement()->bUseControllerDesiredRotation = true;
+	}
+
+	AO_Pitch = GetBaseAimRotation().Pitch;
+	if(AO_Pitch > 90.f && !IsLocallyControlled())
+	{
+		FVector2D InRange(270.f, 360.f);
+		FVector2D OutRange(-90.f, 0.f);
+		AO_Pitch = FMath::GetMappedRangeValueClamped(InRange, OutRange, AO_Pitch);
 	}
 }
 

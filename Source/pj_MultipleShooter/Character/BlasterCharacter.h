@@ -9,10 +9,8 @@
 #include <Components/WidgetComponent.h>
 #include <pj_MultipleShooter/Weapon/Weapon.h>
 #include "pj_MultipleShooter/BlasterComponent/CombatComponent.h"
+#include "pj_MultipleShooter/BlasterType/TurnInPlace.h"
 #include "BlasterCharacter.generated.h"
-
-
-
 
 UCLASS()
 class PJ_MULTIPLESHOOTER_API ABlasterCharacter : public ACharacter
@@ -72,9 +70,12 @@ private:
 	UFUNCTION(Server,Reliable) //Reliable = once Equip Button pressed, we 
 	void ServerEquipButtonPressed();
 
+	//Rotation
 	float AO_Yaw;
 	float AO_Pitch;
 	FRotator StartingAimRotator;
+
+	ETurningInPlace TurningInPlace;
 
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);
@@ -82,4 +83,6 @@ public:
 	bool IsAiming();
 	FORCEINLINE float GetAOYaw() const { return AO_Yaw; }
 	FORCEINLINE float GetAOPitch() const { return AO_Pitch; }
+	AWeapon* GetEquippedWeapon();
+	FORCEINLINE ETurningInPlace GetETurningInPlace() const { return TurningInPlace; }
 };

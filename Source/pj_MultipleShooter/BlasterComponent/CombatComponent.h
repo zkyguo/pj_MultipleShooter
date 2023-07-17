@@ -25,6 +25,7 @@ public:
 	void EquipeWeapon(AWeapon* Weapon);
 	void SetAiming(bool bIsAiming);
 
+
 	UFUNCTION(Server, Reliable)
 	void ServerSetAiming(bool bIsAiming);
 

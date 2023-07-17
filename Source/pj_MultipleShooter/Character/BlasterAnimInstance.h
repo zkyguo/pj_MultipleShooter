@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
 #include "BlasterCharacter.h"
+#include "pj_MultipleShooter/BlasterType/TurnInPlace.h"
 #include "BlasterAnimInstance.generated.h"
 
 /**
@@ -20,6 +21,8 @@ public:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 private:
+
+	//Animation
 	UPROPERTY(BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<ABlasterCharacter> BlasterCharacter;
 
@@ -47,6 +50,7 @@ private:
 	UPROPERTY(BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
 	float Lean;
 
+	//Aim Offset 
 	UPROPERTY(BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
 	float AO_Yaw;
 
@@ -56,4 +60,12 @@ private:
 	FRotator CharacterRotationLastFrame;
 	FRotator CharacterRotation;
 	FRotator DeltaRotation;
+	ETurningInPlace TurningInPlace;
+
+	//IK
+	UPROPERTY(BlueprintReadOnly, Category = Character, meta = (AllowPrivateAccess = "true"))
+	FTransform LeftHandTransform;
+	AWeapon* EquippedWeapon;
+
+
 };

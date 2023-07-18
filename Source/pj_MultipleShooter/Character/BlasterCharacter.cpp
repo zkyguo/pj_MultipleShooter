@@ -34,6 +34,8 @@ ABlasterCharacter::ABlasterCharacter()
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+
+	TurningInPlace = ETurningInPlace::ETIP_NoTurning;
 }
 
 // Called whe the game starts or when spawned
@@ -178,6 +180,7 @@ void ABlasterCharacter::AimOffset(float DeltaTime)
 		FRotator DeltaAimRotator = UKismetMathLibrary::NormalizedDeltaRotator(CurrentAimRotator, StartingAimRotator);
 		AO_Yaw = DeltaAimRotator.Yaw;
 		GetCharacterMovement()->bUseControllerDesiredRotation = false;
+		TurnInPlace(DeltaTime);
 		
 	}
 	if(Speed > 0.f || isInAir) //if moving or jumping
@@ -185,6 +188,7 @@ void ABlasterCharacter::AimOffset(float DeltaTime)
 		StartingAimRotator = FRotator(0.f, GetBaseAimRotation().Yaw, 0.f);
 		AO_Yaw = 0.f;
 		GetCharacterMovement()->bUseControllerDesiredRotation = true;
+		TurningInPlace = ETurningInPlace::ETIP_NoTurning;
 	}
 
 	AO_Pitch = GetBaseAimRotation().Pitch;
@@ -213,6 +217,18 @@ void ABlasterCharacter::ServerEquipButtonPressed_Implementation()
 	if (CombatComponent)
 	{
 		CombatComponent->EquipeWeapon(OverlappingWeapon);
+	}
+}
+
+void ABlasterCharacter::TurnInPlace(float DeltaTime)
+{
+	if(AO_Yaw > 90.f)
+	{
+		TurningInPlace = ETurningInPlace::ETIP_Right;
+	}
+	else if(AO_Yaw < -90.f)
+	{
+		TurningInPlace = ETurningInPlace::ETIP_Left;
 	}
 }
 

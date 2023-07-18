@@ -76,6 +76,7 @@ private:
 	FRotator StartingAimRotator;
 
 	ETurningInPlace TurningInPlace;
+	void TurnInPlace(float DeltaTime);
 
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);

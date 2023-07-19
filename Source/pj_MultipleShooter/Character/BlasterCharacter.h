@@ -43,6 +43,7 @@ protected:
 	void AimButtonPressed();
 	void AimButtonReleassed();
 	void AimOffset(float DeltaTime);
+	virtual void Jump() override;
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
@@ -73,6 +74,7 @@ private:
 	//Rotation
 	float AO_Yaw;
 	float AO_Pitch;
+	float InterpAO_Yaw;
 	FRotator StartingAimRotator;
 
 	ETurningInPlace TurningInPlace;

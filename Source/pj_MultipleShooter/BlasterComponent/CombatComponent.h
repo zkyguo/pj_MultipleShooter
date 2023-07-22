@@ -32,6 +32,8 @@ public:
 	UFUNCTION()
 	void OnRep_EquippedWeapon();
 
+	void FireButtonPressed(bool bIsFire);
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -54,5 +56,6 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float AimWalkSpeed;
-		
+
+	bool bFireButtonPressed;
 };

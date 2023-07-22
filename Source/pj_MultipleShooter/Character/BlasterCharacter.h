@@ -28,6 +28,7 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	// Initialize components
 	virtual void PostInitializeComponents() override;
+	void PlayFireMontage(bool isAiming);
 
 protected:
 	// Called when the game starts or when spawned
@@ -42,6 +43,9 @@ protected:
 	void EquipeButtonPressed();
 	void AimButtonPressed();
 	void AimButtonReleassed();
+	void FireButtonPressed();
+	void FireButtonReleased();
+
 	void AimOffset(float DeltaTime);
 	virtual void Jump() override;
 
@@ -79,6 +83,9 @@ private:
 
 	ETurningInPlace TurningInPlace;
 	void TurnInPlace(float DeltaTime);
+
+	UPROPERTY(EditAnywhere, Category = Combat)
+	UAnimMontage* FireWeaponMontage;
 
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);

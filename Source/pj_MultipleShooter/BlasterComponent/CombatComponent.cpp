@@ -29,6 +29,15 @@ void UCombatComponent::OnRep_EquippedWeapon()
 	}
 }
 
+void UCombatComponent::FireButtonPressed(bool bIsFire)
+{
+	bFireButtonPressed = bIsFire;
+	if(Character && bFireButtonPressed)
+	{
+		Character->PlayFireMontage(bAiming);
+	}
+}
+
 // Called when the game starts
 void UCombatComponent::BeginPlay()
 {

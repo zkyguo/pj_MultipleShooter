@@ -19,6 +19,14 @@ UCombatComponent::UCombatComponent()
 	AimWalkSpeed = 100.f;
 }
 
+void UCombatComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	//Reflect EquippedWeapon change to all client
+	DOREPLIFETIME(UCombatComponent, EquippedWeapon);
+	DOREPLIFETIME(UCombatComponent, bAiming);
+}
 
 void UCombatComponent::OnRep_EquippedWeapon()
 {
@@ -32,9 +40,25 @@ void UCombatComponent::OnRep_EquippedWeapon()
 void UCombatComponent::FireButtonPressed(bool bIsFire)
 {
 	bFireButtonPressed = bIsFire;
-	if(Character && bFireButtonPressed)
+	if(bFireButtonPressed)
+	{
+		ServerFire();//Send fire button pressed to server
+	}
+	
+}
+
+void UCombatComponent::ServerFire_Implementation()
+{
+	MulticastFire(); //In the server, replicated Fire action to All Your controlled Actor on other client side 
+}
+
+void UCombatComponent::MulticastFire_Implementation()
+{
+	if (EquippedWeapon == NULL) return;
+	if (Character)
 	{
 		Character->PlayFireMontage(bAiming);
+		EquippedWeapon->Fire();
 	}
 }
 
@@ -59,14 +83,6 @@ void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	// ...
 }
 
-void UCombatComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	//Reflect EquippedWeapon change to all client
-	DOREPLIFETIME(UCombatComponent, EquippedWeapon);
-	DOREPLIFETIME(UCombatComponent, bAiming);
-}
 
 void UCombatComponent::EquipeWeapon(AWeapon* Weapon)
 {

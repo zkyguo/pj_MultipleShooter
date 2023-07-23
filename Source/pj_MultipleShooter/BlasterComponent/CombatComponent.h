@@ -34,6 +34,19 @@ public:
 
 	void FireButtonPressed(bool bIsFire);
 
+	/**
+	 * @brief Send Fire command from client to server
+	 */
+	UFUNCTION(Server, Reliable)
+	void ServerFire();
+
+	/**
+	 * @brief Send Fire Command to all other client. Why multicast, because for autofire weapon, as we persist pressing on fire button
+	 * But replicated can only detect changing value.So we need multicast to assure that weapon keep firing
+	 */
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastFire();
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;

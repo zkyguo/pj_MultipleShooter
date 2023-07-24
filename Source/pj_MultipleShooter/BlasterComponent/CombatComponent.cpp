@@ -5,6 +5,7 @@
 #include "pj_MultipleShooter/Character/BlasterCharacter.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values for this component's properties
@@ -58,7 +59,51 @@ void UCombatComponent::MulticastFire_Implementation()
 	if (Character)
 	{
 		Character->PlayFireMontage(bAiming);
-		EquippedWeapon->Fire();
+		EquippedWeapon->Fire(HitTarget);
+	}
+}
+
+void UCombatComponent::TraceUnderCrossHairs(FHitResult HitResult)
+{
+	FVector2D ViewportSize;
+	if(GEngine && GEngine->GameViewport)
+	{
+		GEngine->GameViewport->GetViewportSize(ViewportSize);
+	}
+
+	//get the cross position which at the middle of screen
+	FVector2D CrosshairLocations(ViewportSize.X / 2.f, ViewportSize.Y/2.f);
+
+	FVector CrosshairWorldPosition;
+	FVector CrosshairWorldDirection;
+	bool bScreenToWorld = UGameplayStatics::DeprojectScreenToWorld(
+		UGameplayStatics::GetPlayerController(this,0), 
+		CrosshairLocations, 
+		CrosshairWorldPosition,
+		CrosshairWorldDirection);
+
+	if(bScreenToWorld)
+	{
+		FVector Start = CrosshairWorldPosition;
+		FVector End = Start + CrosshairWorldDirection * TRACE_LENGTH;
+
+		GetWorld()->LineTraceSingleByChannel(
+			HitResult,
+			Start,
+			End,
+			ECC_Visibility
+		);
+
+		if(!HitResult.bBlockingHit)
+		{
+			HitResult.ImpactPoint = End;
+			HitTarget = End;
+		}
+		else
+		{
+			HitTarget = HitResult.ImpactPoint;
+			DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 12.f, 12, FColor::Red);
+		}
 	}
 }
 
@@ -80,7 +125,8 @@ void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	FHitResult HitResult;
+	TraceUnderCrossHairs(HitResult);
 }
 
 

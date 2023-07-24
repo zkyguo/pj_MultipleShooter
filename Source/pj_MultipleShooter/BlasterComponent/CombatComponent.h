@@ -7,6 +7,7 @@
 #include "Components/ActorComponent.h"
 #include "CombatComponent.generated.h"
 
+#define TRACE_LENGTH 8000.f;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PJ_MULTIPLESHOOTER_API UCombatComponent : public UActorComponent
@@ -34,6 +35,7 @@ public:
 
 	void FireButtonPressed(bool bIsFire);
 
+
 	/**
 	 * @brief Send Fire command from client to server
 	 */
@@ -46,6 +48,8 @@ public:
 	 */
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastFire();
+
+	void TraceUnderCrossHairs(FHitResult HitResult);
 
 protected:
 	// Called when the game starts
@@ -71,4 +75,6 @@ private:
 	float AimWalkSpeed;
 
 	bool bFireButtonPressed;
+
+	FVector HitTarget;
 };

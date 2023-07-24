@@ -5,7 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include <Components/BoxComponent.h>
+#include <GameFramework/ProjectileMovementComponent.h>
 #include "Projectile.generated.h"
+
 
 
 UCLASS()
@@ -28,5 +30,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* CollisionBox;
 	
-
+	UPROPERTY(EditAnywhere)
+	UProjectileMovementComponent* ProjectileMovementComponent;
 };

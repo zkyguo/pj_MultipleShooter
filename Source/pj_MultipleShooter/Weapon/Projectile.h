@@ -6,7 +6,9 @@
 #include "GameFramework/Actor.h"
 #include <Components/BoxComponent.h>
 #include <GameFramework/ProjectileMovementComponent.h>
+#include <Sound/SoundCue.h>
 #include "Projectile.generated.h"
+
 
 
 
@@ -20,10 +22,14 @@ public:
 	AProjectile();
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	virtual void Destroyed() override;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UFUNCTION()
+	virtual void OnHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp,FVector NormalImpulse, const FHitResult& Hit);
 
 private:
 
@@ -39,4 +45,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	UParticleSystemComponent* TracerComponent;
 
+	UPROPERTY(EditAnywhere)
+	UParticleSystem* ImpactParticle;
+
+	UPROPERTY(EditAnywhere)
+	USoundCue* ImpactSound;
 };

@@ -13,6 +13,7 @@ void UUI_OverHeadWidget::SetDisplayText(FString& Content)
 
 void UUI_OverHeadWidget::ShowPlayerNetRole(const APawn* InPawn)
 {
+
 	ENetRole LocalRole = InPawn->GetLocalRole();
 	FString Role;
 	switch(LocalRole)

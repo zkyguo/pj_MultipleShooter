@@ -43,23 +43,25 @@ void UCombatComponent::FireButtonPressed(bool bIsFire)
 	bFireButtonPressed = bIsFire;
 	if(bFireButtonPressed)
 	{
-		ServerFire();//Send fire button pressed to server
+		FHitResult HitResult;
+		TraceUnderCrossHairs(HitResult);
+		ServerFire(HitResult.ImpactPoint);//Send fire button pressed to server
 	}
 	
 }
 
-void UCombatComponent::ServerFire_Implementation()
+void UCombatComponent::ServerFire_Implementation(const FVector_NetQuantize& TraceHitTarget)
 {
-	MulticastFire(); //In the server, replicated Fire action to All Your controlled Actor on other client side 
+	MulticastFire(TraceHitTarget); //In the server, replicated Fire action to All Your own Actor on other client side 
 }
 
-void UCombatComponent::MulticastFire_Implementation()
+void UCombatComponent::MulticastFire_Implementation(const FVector_NetQuantize& TraceHitTarget)
 {
 	if (EquippedWeapon == NULL) return;
 	if (Character)
 	{
 		Character->PlayFireMontage(bAiming);
-		EquippedWeapon->Fire(HitTarget);
+		EquippedWeapon->Fire(TraceHitTarget);
 	}
 }
 
@@ -93,17 +95,6 @@ void UCombatComponent::TraceUnderCrossHairs(FHitResult HitResult)
 			End,
 			ECC_Visibility
 		);
-
-		if(!HitResult.bBlockingHit)
-		{
-			HitResult.ImpactPoint = End;
-			HitTarget = End;
-		}
-		else
-		{
-			HitTarget = HitResult.ImpactPoint;
-			DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 12.f, 12, FColor::Red);
-		}
 	}
 }
 
@@ -125,8 +116,6 @@ void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	FHitResult HitResult;
-	TraceUnderCrossHairs(HitResult);
 }
 
 

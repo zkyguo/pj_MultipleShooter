@@ -40,14 +40,14 @@ public:
 	 * @brief Send Fire command from client to server
 	 */
 	UFUNCTION(Server, Reliable)
-	void ServerFire();
+	void ServerFire(const FVector_NetQuantize& TraceHitTarget);
 
 	/**
 	 * @brief Send Fire Command to all other client. Why multicast, because for autofire weapon, as we persist pressing on fire button
 	 * But replicated can only detect changing value.So we need multicast to assure that weapon keep firing
 	 */
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastFire();
+	void MulticastFire(const FVector_NetQuantize& TraceHitTarget);
 
 	void TraceUnderCrossHairs(FHitResult HitResult);
 
@@ -76,5 +76,4 @@ private:
 
 	bool bFireButtonPressed;
 
-	FVector HitTarget;
 };

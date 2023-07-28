@@ -2,6 +2,7 @@
 
 
 #include "Projectile.h"
+#include <Kismet/GameplayStatics.h>
 
 // Sets default values
 AProjectile::AProjectile()
@@ -25,6 +26,17 @@ AProjectile::AProjectile()
 void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+	if(Tracer)
+	{
+		UGameplayStatics::SpawnEmitterAttached(
+			Tracer,
+			CollisionBox,
+			FName(),
+			GetActorLocation(),
+			GetActorRotation(),
+			EAttachLocation::KeepWorldPosition
+		);
+	}
 	
 }
 

@@ -34,6 +34,21 @@ public:
 	void ShowPickUpWidget(bool bShowWidget);
 	virtual void Fire(const FVector& HitTarget);
 
+	UPROPERTY(EditAnywhere, Category = "Crosshairs")
+	UTexture2D* CrosshairsCenter;
+
+	UPROPERTY(EditAnywhere, Category = "Crosshairs")
+	UTexture2D* CrosshairsRight;
+
+	UPROPERTY(EditAnywhere, Category = "Crosshairs")
+	UTexture2D* CrosshairsLeft;
+
+	UPROPERTY(EditAnywhere, Category = "Crosshairs")
+	UTexture2D* CrosshairsBottom;
+
+	UPROPERTY(EditAnywhere, Category = "Crosshairs")
+	UTexture2D* CrosshairsTop;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

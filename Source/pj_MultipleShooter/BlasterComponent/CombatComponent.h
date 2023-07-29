@@ -5,7 +5,11 @@
 #include "CoreMinimal.h"
 #include <pj_MultipleShooter/Weapon/Weapon.h>
 #include "Components/ActorComponent.h"
+#include <pj_MultipleShooter/PlayerController/BlasterPlayerController.h>
+#include <pj_MultipleShooter/HUD/BlasterHUD.h>
 #include "CombatComponent.generated.h"
+
+
 
 #define TRACE_LENGTH 8000.f;
 
@@ -51,6 +55,8 @@ public:
 
 	void TraceUnderCrossHairs(FHitResult HitResult);
 
+	void SetHUDCrosshairs(float DeltaTime);
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -58,6 +64,8 @@ protected:
 private:
 
 	class ABlasterCharacter* Character;
+	ABlasterPlayerController* Controller;
+	ABlasterHUD* HUD;
 
 	UPROPERTY(ReplicatedUsing = OnRep_EquippedWeapon)
 	AWeapon* EquippedWeapon;

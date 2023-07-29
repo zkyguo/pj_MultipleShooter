@@ -6,7 +6,9 @@
 #include "GameFramework/Actor.h"
 #include <Components/SphereComponent.h>
 #include <Components/WidgetComponent.h>
+#include "Casing.h"
 #include "Weapon.generated.h"
+
 
 
 UENUM()
@@ -73,6 +75,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
 	UAnimationAsset* FireAnimation;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ACasing> CasingClass;
 
 public:
 	//use to update weaponState locally

@@ -53,7 +53,7 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastFire(const FVector_NetQuantize& TraceHitTarget);
 
-	void TraceUnderCrossHairs(FHitResult HitResult);
+	void TraceUnderCrossHairs(FHitResult& HitResult);
 
 	void SetHUDCrosshairs(float DeltaTime);
 

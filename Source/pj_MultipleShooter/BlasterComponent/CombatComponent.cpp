@@ -66,7 +66,7 @@ void UCombatComponent::MulticastFire_Implementation(const FVector_NetQuantize& T
 	}
 }
 
-void UCombatComponent::TraceUnderCrossHairs(FHitResult HitResult)
+void UCombatComponent::TraceUnderCrossHairs(FHitResult& HitResult)
 {
 	FVector2D ViewportSize;
 	if(GEngine && GEngine->GameViewport)

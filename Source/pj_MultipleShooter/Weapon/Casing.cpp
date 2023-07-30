@@ -35,8 +35,8 @@ void ACasing::OnHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveCompon
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, ShellSound, GetActorLocation());
 	}
-	
-	GetWorldTimerManager().SetTimer(DestroyTimerHandler, [this] {Destroy(); }, 2.f,false);
+	Destroy();
+	//GetWorldTimerManager().SetTimer(DestroyTimerHandler, [this] {Destroy(); }, 2.f,false);
 }
 
 // Called every frame

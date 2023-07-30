@@ -92,6 +92,8 @@ private:
 
 	FVector HitTarget;
 
+	FHUDPackage HUDPackage;
+
 	/**
 	* Aiming and FOV
 	*/

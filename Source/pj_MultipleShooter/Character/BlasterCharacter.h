@@ -10,10 +10,11 @@
 #include <pj_MultipleShooter/Weapon/Weapon.h>
 #include "pj_MultipleShooter/BlasterComponent/CombatComponent.h"
 #include "pj_MultipleShooter/BlasterType/TurnInPlace.h"
+#include "pj_MultipleShooter/Interfaces/InteractWithCrosshairsInterface.h"
 #include "BlasterCharacter.generated.h"
 
 UCLASS()
-class PJ_MULTIPLESHOOTER_API ABlasterCharacter : public ACharacter
+class PJ_MULTIPLESHOOTER_API ABlasterCharacter : public ACharacter, public IInteractWithCrosshairsInterface
 {
 	GENERATED_BODY()
 

@@ -6,6 +6,7 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "pj_MultipleShooter/Interfaces/InteractWithCrosshairsInterface.h"
 #include "Net/UnrealNetwork.h"
 
 
@@ -102,6 +103,15 @@ void UCombatComponent::TraceUnderCrossHairs(FHitResult& HitResult)
 			ECC_Visibility
 		);
 	}
+
+	if (HitResult.GetActor() && HitResult.GetActor()->Implements<UInteractWithCrosshairsInterface>())
+	{
+		HUDPackage.CrosshairsColor = FLinearColor::Red;
+	}
+	else
+	{
+		HUDPackage.CrosshairsColor = FLinearColor::White;
+	}
 }
 
 void UCombatComponent::SetHUDCrosshairs(float DeltaTime)
@@ -115,7 +125,6 @@ void UCombatComponent::SetHUDCrosshairs(float DeltaTime)
 		HUD = HUD == nullptr ? Cast<ABlasterHUD>(Controller->GetHUD()) : HUD;
 		if (HUD)
 		{
-			FHUDPackage HUDPackage;
 			if (EquippedWeapon)
 			{
 				HUDPackage.CrosshairsCenter = EquippedWeapon->CrosshairsCenter;
@@ -180,6 +189,8 @@ void UCombatComponent::SetHUDCrosshairs(float DeltaTime)
 
 			HUD->SetHUDPackage(HUDPackage);
 		}
+
+		
 	}
 }
 

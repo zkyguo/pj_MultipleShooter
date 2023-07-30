@@ -49,6 +49,8 @@ protected:
 	void AimOffset(float DeltaTime);
 	virtual void Jump() override;
 
+	
+
 private:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	USpringArmComponent* CameraBoom;
@@ -75,7 +77,10 @@ private:
 	UFUNCTION(Server,Reliable) //Reliable = once Equip Button pressed, we 
 	void ServerEquipButtonPressed();
 
-	//Rotation
+	
+	/**
+	*  Character anim Rotation
+	*/
 	float AO_Yaw;
 	float AO_Pitch;
 	float InterpAO_Yaw;
@@ -87,6 +92,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = Combat)
 	UAnimMontage* FireWeaponMontage;
 
+	
+
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);
 	bool IsWeaponEquipped();
@@ -96,4 +103,6 @@ public:
 	AWeapon* GetEquippedWeapon();
 	FORCEINLINE ETurningInPlace GetETurningInPlace() const { return TurningInPlace; }
 	FVector GetHitTarget() const;
+
+	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 };

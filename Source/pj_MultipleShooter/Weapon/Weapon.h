@@ -34,6 +34,10 @@ public:
 	void ShowPickUpWidget(bool bShowWidget);
 	virtual void Fire(const FVector& HitTarget);
 
+
+	/**
+	* Crosshairs 
+	*/
 	UPROPERTY(EditAnywhere, Category = "Crosshairs")
 	UTexture2D* CrosshairsCenter;
 
@@ -48,6 +52,15 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Crosshairs")
 	UTexture2D* CrosshairsTop;
+
+	/**
+	* Zoomed FOV while aiming
+	*/
+	UPROPERTY(EditAnywhere)
+	float ZoomedFOV = 30.f;
+
+	UPROPERTY(EditAnywhere)
+	float ZoomInterpSpeed = 20.f;
 
 protected:
 	// Called when the game starts or when spawned
@@ -94,10 +107,14 @@ private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ACasing> CasingClass;
 
+
+
 public:
 	//use to update weaponState locally
 	void SetWeaponState(EWeaponState state);
 	FORCEINLINE USphereComponent* GetAreaSphere() const { return AreaSphere; }
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
-	
+	//Aim Camera
+	FORCEINLINE float GetZoomedFOV() const { return ZoomedFOV; }
+	FORCEINLINE float GetZoomInterpSpeed() const { return ZoomInterpSpeed; }
 };
